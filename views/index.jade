@@ -3,12 +3,16 @@ extends layout
 block content
   div.container-map
     div#map
+    script(src='/javascripts/qrhome.js')
     script.
       var map;
       function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: -34.397, lng: 150.644},
-          zoom: 8
+        map = new google.maps.Map($('#map')[0], {
+          center: coordPortland,
+          zoom: 14
         });
+        var bikeLayer = new google.maps.BicyclingLayer();
+        bikeLayer.setMap(map);
+        tweakLocation(map);
       }
     script(async, defer, src='http://maps.googleapis.com/maps/api/js?key=AIzaSyAUKfDYKisl8xpYfQRgNnqW-8FQjo-LFxA&callback=initMap')
