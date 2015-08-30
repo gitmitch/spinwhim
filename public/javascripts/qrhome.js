@@ -26,6 +26,7 @@ var homeMarker = null;
 
 var queryNdx = 0;
 
+var slider = null;
 
 function tweakLocation(map) {
 
@@ -44,7 +45,7 @@ function tweakLocation(map) {
 }
 
 function initSlider() {
-    var slider = $("#range")[0];
+    slider = $("#range")[0];
     //var slider = document.getElementById('range');
     noUiSlider.create(slider, {
         start: [DEFAULT_LOWER, DEFAULT_UPPER], // Handle start position
@@ -73,7 +74,7 @@ function initSlider() {
 
     });
 
-    slider.noUiSlider.on('change', function(values, handle) {
+    slider.noUiSlider.on('set', function(values, handle) {
         updateRadius(values[0], values[1], true);
     })
 
@@ -194,6 +195,30 @@ function goRandom() {
         google.maps.event.trigger(markers[luckyMarker], 'click');
 
     }
+}
+
+function inputLowerBound() {
+
+    if(slider === null) return;
+
+    var response = window.prompt("Enter a minimum distance in miles (must be greater than or equal to " + ABSOLUTE_LOWER.toString(),
+        curLowerBound);
+
+    if(response === null) return;
+
+    slider.noUiSlider.set(response);
+}
+
+function inputUpperBound() {
+
+    if(slider === null) return;
+
+    var response = window.prompt("Enter a maximum distance in miles (must be less than or equal to " + ABSOLUTE_UPPER.toString(),
+        curUpperBound);
+
+    if(response === null) return;
+
+    slider.noUiSlider.set([null, response]);
 }
 
 
