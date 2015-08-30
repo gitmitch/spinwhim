@@ -4,7 +4,7 @@
 TODO:
 
 
-allow manual distance entry
+put at X in upper-right of about page
 
  */
 
