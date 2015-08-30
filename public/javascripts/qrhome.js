@@ -4,7 +4,7 @@
 TODO:
 
 
-implement random button
+allow manual distance entry
 
  */
 
@@ -177,6 +177,26 @@ function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
 
 }
 
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * http://stackoverflow.com/questions/1527803/generating-random-numbers-in-javascript-in-a-specific-range
+ */
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function goRandom() {
+    if(markers.length > 0) {
+        var luckyMarker = 0;
+        if(markers.length != 1)
+            luckyMarker = getRandomInt(0, markers.length-1);
+        google.maps.event.trigger(markers[luckyMarker], 'click');
+
+    }
+}
+
+
 function addMarkerForPlace(map, place) {
     var marker = new google.maps.Marker({
         map: map,
@@ -193,7 +213,7 @@ function addMarkerForPlace(map, place) {
         setTimeout(function() {
             if(new Date().valueOf() - now > 1000) return;
             window.open(getWebDirectionsURL(homeLocation, position), "_blank");
-        }, 25);
+        }, 250);
 
         window.location = getIosDirectionsURL(position);
     })
