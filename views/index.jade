@@ -3,10 +3,27 @@ extends layout
 block content
   div.container-map
     div#map
+
     script(src='/javascripts/qrhome.js')
     script.
       var map;
+
+      function loadJS(file) {
+        // DOM: Create the script element
+        var jsElm = document.createElement("script");
+        // set the type attribute
+        jsElm.type = "application/javascript";
+        // make the script element load file
+        jsElm.src = file;
+        // finally insert the element to the body element in order to load the script
+        document.body.appendChild(jsElm);
+      }
+
+
       function initMap() {
+        loadJS("/javascripts/google.maps.Polygon.getBounds.js");
+        loadJS("/javascripts/google.maps.Polygon.moveTo.js");
+
         map = new google.maps.Map($('#map')[0], {
           center: coordPortland,
           zoom: 1

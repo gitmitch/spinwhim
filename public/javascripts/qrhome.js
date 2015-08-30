@@ -20,7 +20,6 @@ var markers = [];
 
 var homeLocation = coordPortland;
 
-//var bounds = null;
 
 
 function tweakLocation(map) {
@@ -41,7 +40,6 @@ function tweakLocation(map) {
 
 function centerMap(map, withMarker, errMsg) {
     map.setCenter(homeLocation);
-    //bounds = new google.maps.LatLngBounds();
 
     var marker = new google.maps.Marker({
         position: homeLocation,
@@ -53,32 +51,27 @@ function centerMap(map, withMarker, errMsg) {
 
     google.maps.event.addListener(marker, 'dragend', function() {
         clearAllMarkers();
-        innerCircle.setMap(null);
-        innerCircle = null;
-        doughnut.setMap(null);
-        doughnut = null;
         homeLocation = this.position;
+        doughnut.moveTo(this.position);
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, 9656, 0));
+        bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, 9656, 180));
+        map.fitBounds(bounds);
         showDestinations(map, this.position, ['park'], 9656*0.8, 9656);
     });
 
     google.maps.event.addListener(marker, 'drag', function() {
-        innerCircle.setMap(null);
-        innerCircle = null;
-        doughnut.setMap(null);
-        doughnut = null;
         homeLocation = this.position;
-        drawMask(map, this.position, 9656 * 0.8, 9656);
+        doughnut.moveTo(this.position);
     })
 
-    //var infoWindow = new google.maps.InfoWindow({map: map});
-    //infoWindow.setPosition(onLocation);
-    //infoWindow.setContent(withMarker);
-    //if(typeof errMsg !== "undefined")
-    //    alert(errMsg);
 
 
     showDestinations(map, homeLocation, ['park'], 9656 * 0.8, 9656);
+    drawMask(map, homeLocation, 9656 * 0.8, 9656, true);
 
+
+    innerCircle.bindTo("center", marker, "position");
 
 }
 
@@ -110,7 +103,7 @@ function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
         }
     })
 
-    drawMask(map, searchFrom, fromRadius, toRadius, true);
+
 }
 
 function addMarkerForPlace(map, place) {
