@@ -7,10 +7,6 @@ add sliders for radius and range
 
 discard place pages if the map center has moved in the meantime
 
-launch google maps app on ios
-
-
-
  */
 
 
@@ -127,8 +123,6 @@ function addMarkerForPlace(map, place) {
         // thanks to http://stackoverflow.com/questions/13044805/how-to-check-if-an-app-is-installed-from-a-web-page-on-an-iphone
 
         var position = this.position;
-
-        console.log(getIosDirectionsURL(homeLocation, position));
 
         // open the web URL if the app URL didn't go anywhere
         var now = new Date().valueOf();
