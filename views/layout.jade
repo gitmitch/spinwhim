@@ -5,6 +5,7 @@ html
     meta(name="viewport", content="width=device-width, initial-scale=1")
     link(rel='stylesheet', href='/bootstrap/dist/css/bootstrap.css')
     link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/nouislider/distribute/nouislider.min.css')
     script(src="/jquery/dist/jquery.min.js")
 
 
@@ -25,8 +26,26 @@ html
           ul.nav.navbar-nav
             li.active
               a Link1
+            li
+              a#lowerBound
+            li
+              a
+                div#range.noUi-target.noUi-ltr.noUi-horizontal.noUi-background
+            li
+              a#upperBound
+          //form.navbar-form.navbar-left
+          //  div#range.noUi-target.noUi-ltr.noUi-horizontal.noUi-background
+
+
+
+    script(src='/nouislider/distribute/nouislider.min.js')
+
 
 
 
     block content
+
+
+
+
     include footer.jade

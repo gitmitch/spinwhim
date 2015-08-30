@@ -4,9 +4,24 @@ block content
   div.container-map
     div#map
 
+    script.
+
+      var DEFAULT_LOWER = 4;
+      var DEFAULT_UPPER = 6;
+
+      var ABSOLUTE_LOWER = 2;
+      var ABSOLUTE_UPPER = 15;
+
+      function fromMilesToMeters(miles) {
+        return miles * 1609.34;
+      }
+
+
     script(src='/javascripts/qrhome.js')
     script.
       var map;
+
+
 
       function loadJS(file) {
         // DOM: Create the script element
@@ -21,6 +36,9 @@ block content
 
 
       function initMap() {
+
+        // thank you https://github.com/bramus/google-maps-polygon-moveto
+
         loadJS("/javascripts/google.maps.Polygon.getBounds.js");
         loadJS("/javascripts/google.maps.Polygon.moveTo.js");
 
@@ -31,5 +49,9 @@ block content
         var bikeLayer = new google.maps.BicyclingLayer();
         bikeLayer.setMap(map);
         tweakLocation(map);
+
+        initSlider();
+
+
       }
     script(async, defer, src='http://maps.googleapis.com/maps/api/js?key=AIzaSyAUKfDYKisl8xpYfQRgNnqW-8FQjo-LFxA&libraries=places,geometry&callback=initMap')

@@ -20,6 +20,10 @@ var markers = [];
 
 var homeLocation = coordPortland;
 
+var curLowerBound = DEFAULT_LOWER;
+var curUpperBound = DEFAULT_UPPER;
+
+var homeMarker = null;
 
 
 function tweakLocation(map) {
@@ -38,10 +42,53 @@ function tweakLocation(map) {
     }
 }
 
+function initSlider() {
+    var slider = $("#range")[0];
+    //var slider = document.getElementById('range');
+    noUiSlider.create(slider, {
+        start: [DEFAULT_LOWER, DEFAULT_UPPER], // Handle start position
+        step: 0.25, // Slider moves in increments of '10'
+        margin: 1, // Handles must be more than '20' apart
+        connect: true, // Display a colored bar between the handles
+        direction: 'ltr', // Put '0' at the bottom of the slider
+        orientation: 'horizontal', // Orient the slider vertically
+        behaviour: 'tap-drag', // Move handle on tap, bar is draggable
+        range: { // Slider can select '0' to '100'
+            'min': ABSOLUTE_LOWER,
+            'max': ABSOLUTE_UPPER
+        }
+    });
+
+    var lowerBound = $("#lowerBound")[0],
+        upperBound = $("#upperBound")[0];
+
+    slider.noUiSlider.on('update', function(values, handle) {
+        if(handle == 0)
+            lowerBound.innerHTML = values[handle].toString() + " mi";
+        else
+            upperBound.innerHTML = values[handle].toString() + " mi";
+
+        //updateRadius(values[0], values[1]);
+
+    });
+
+    slider.noUiSlider.on('change', function(values, handle) {
+        updateRadius(values[0], values[1], true);
+    })
+
+    slider.noUiSlider.on('slide', function(values, handle) {
+        updateRadius(values[0], values[1], false);
+    })
+}
+
+
+
+
+
 function centerMap(map, withMarker, errMsg) {
     map.setCenter(homeLocation);
 
-    var marker = new google.maps.Marker({
+    homeMarker = new google.maps.Marker({
         position: homeLocation,
         map: map,
         title: withMarker,
@@ -49,31 +96,50 @@ function centerMap(map, withMarker, errMsg) {
         icon: '/images/bikeicon.png'
     })
 
-    google.maps.event.addListener(marker, 'dragend', function() {
+    google.maps.event.addListener(homeMarker, 'dragend', function() {
         clearAllMarkers();
         homeLocation = this.position;
         doughnut.moveTo(this.position);
-        var bounds = new google.maps.LatLngBounds();
-        bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, 9656, 0));
-        bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, 9656, 180));
-        map.fitBounds(bounds);
-        showDestinations(map, this.position, ['park'], 9656*0.8, 9656);
+        updateBounds();
+        showDestinations(map, this.position, ['park'], fromMilesToMeters(curLowerBound), fromMilesToMeters(curUpperBound));
     });
 
-    google.maps.event.addListener(marker, 'drag', function() {
+    google.maps.event.addListener(homeMarker, 'drag', function() {
         homeLocation = this.position;
         doughnut.moveTo(this.position);
     })
 
 
 
-    showDestinations(map, homeLocation, ['park'], 9656 * 0.8, 9656);
-    drawMask(map, homeLocation, 9656 * 0.8, 9656, true);
-
-
-    innerCircle.bindTo("center", marker, "position");
+    showDestinations(map, homeLocation, ['park'], fromMilesToMeters(curLowerBound), fromMilesToMeters(curUpperBound));
+    drawMask(map, homeLocation, fromMilesToMeters(curLowerBound), fromMilesToMeters(curUpperBound), true);
 
 }
+
+function updateBounds() {
+    var bounds = new google.maps.LatLngBounds();
+    bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, fromMilesToMeters(curUpperBound), 0));
+    bounds.extend(google.maps.geometry.spherical.computeOffset(homeLocation, fromMilesToMeters(curUpperBound), 180));
+    map.fitBounds(bounds);
+}
+
+function updateRadius(lowerBound, upperBound, searchAgain) {
+    if(searchAgain === undefined)
+        searchAgain = false;
+
+    curLowerBound = lowerBound;
+    curUpperBound = upperBound;
+
+    drawMask(map, homeLocation, fromMilesToMeters(curLowerBound), fromMilesToMeters(curUpperBound), true);
+
+    if(searchAgain) {
+        clearAllMarkers();
+        showDestinations(map, homeLocation, ['park'], fromMilesToMeters(curLowerBound), fromMilesToMeters(curUpperBound));
+    }
+}
+
+
+
 
 function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
     var service = new google.maps.places.PlacesService(map);
@@ -159,6 +225,12 @@ function clearAllMarkers() {
 }
 
 function drawMask(map, center, innerRadius, outerRadius, changeBounds) {
+
+    if(innerCircle !== null)
+        innerCircle.setMap(null);
+    if(doughnut !== null)
+        doughnut.setMap(null);
+
     drawDoughnut(map, center, outerRadius, outerRadius * 10);
 
     innerCircle = new google.maps.Circle({
@@ -170,12 +242,11 @@ function drawMask(map, center, innerRadius, outerRadius, changeBounds) {
         radius: innerRadius
     });
 
-    if(changeBounds !== undefined && changeBounds) {
-        var bounds = new google.maps.LatLngBounds();
-        bounds.extend(google.maps.geometry.spherical.computeOffset(center, outerRadius, 0));
-        bounds.extend(google.maps.geometry.spherical.computeOffset(center, outerRadius, 180));
-        map.fitBounds(bounds);
-    }
+    if(changeBounds !== undefined && changeBounds)
+        updateBounds();
+
+    innerCircle.bindTo("center", homeMarker, "position");
+
 }
 
 
