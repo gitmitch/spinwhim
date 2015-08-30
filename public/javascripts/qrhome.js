@@ -93,7 +93,7 @@ function centerMap(map, withMarker, errMsg) {
         map: map,
         title: withMarker,
         draggable: true,
-        icon: '/images/bikeicon.png'
+        icon: 'public/images/bikeicon.png'
     })
 
     google.maps.event.addListener(homeMarker, 'dragend', function() {
