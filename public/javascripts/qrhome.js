@@ -7,6 +7,8 @@ add sliders for radius and range
 
 discard place pages if the map center has moved in the meantime
 
+launch google maps app on ios
+
 
 
  */
@@ -122,15 +124,40 @@ function addMarkerForPlace(map, place) {
     });
 
     marker.addListener('click', function() {
-        window.open(getDirectionsURL(homeLocation, this.position), "_blank");
+        // thanks to http://stackoverflow.com/questions/13044805/how-to-check-if-an-app-is-installed-from-a-web-page-on-an-iphone
+
+        var position = this.position;
+
+        console.log(getIosDirectionsURL(homeLocation, position));
+
+        // open the web URL if the app URL didn't go anywhere
+        var now = new Date().valueOf();
+        setTimeout(function() {
+            if(new Date().valueOf() - now > 1000) return;
+            window.open(getWebDirectionsURL(homeLocation, position), "_blank");
+        }, 25);
+
+        window.location = getIosDirectionsURL(position);
     })
 
     markers.push(marker);
 }
 
 
-function getDirectionsURL(fromCoord, toCoord) {
-    return "https://www.google.com/maps/dir/"
+function getWebDirectionsURL(fromCoord, toCoord) {
+    return "https://" + getDirectionsURLFragment(fromCoord, toCoord);
+}
+
+function getIosDirectionsURL(toCoord) {
+    //return "comgooglemaps://" + getDirectionsURLFragment(fromCoord, toCoord);
+
+    return "comgooglemaps://?daddr="
+        + toCoord.lat().toString() + "," + toCoord.lng().toString()
+        + "&directionsmode=bicycling";
+}
+
+function getDirectionsURLFragment(fromCoord, toCoord) {
+    return "www.google.com/maps/dir/"
         + fromCoord.lat().toString() + "," + fromCoord.lng().toString()
         + "/" + toCoord.lat().toString() + "," + toCoord.lng().toString()
         + "/data=!3m1!4b1!4m2!4m1!3e1!5m1!1e3";
