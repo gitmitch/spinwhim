@@ -4,7 +4,6 @@
 TODO:
 
 
-put at X in upper-right of about page
 
  */
 
