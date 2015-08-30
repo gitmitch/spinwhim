@@ -16,7 +16,7 @@ var innerCircle = null;
 var doughnut = null;
 var markers = [];
 
-var homeLocation = coordPortland;
+var homeLocation = null;
 
 var curLowerBound = DEFAULT_LOWER;
 var curUpperBound = DEFAULT_UPPER;
@@ -29,13 +29,14 @@ var slider = null;
 
 function tweakLocation(map) {
 
+    homeLocation = new google.maps.LatLng(coordPortland.lat, coordPortland.lng);
     // check whether the browser supports W3C geolocation
     if(navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             homeLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
             centerMap(map, "Your Location");
         }, function() {
-            centerMap(map, "Approximate Location", "Sorry, we couldn't figure out where you are, so we're assuming you're in Portland.");
+            centerMap(map, "Sorry, we couldn't figure out where you are, so we're assuming you're in Portland.");
         })
     }
     else {
