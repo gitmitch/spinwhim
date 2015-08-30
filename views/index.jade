@@ -9,10 +9,10 @@ block content
       function initMap() {
         map = new google.maps.Map($('#map')[0], {
           center: coordPortland,
-          zoom: 14
+          zoom: 12
         });
         var bikeLayer = new google.maps.BicyclingLayer();
         bikeLayer.setMap(map);
         tweakLocation(map);
       }
-    script(async, defer, src='http://maps.googleapis.com/maps/api/js?key=AIzaSyAUKfDYKisl8xpYfQRgNnqW-8FQjo-LFxA&callback=initMap')
+    script(async, defer, src='http://maps.googleapis.com/maps/api/js?key=AIzaSyAUKfDYKisl8xpYfQRgNnqW-8FQjo-LFxA&libraries=places,geometry&callback=initMap')
