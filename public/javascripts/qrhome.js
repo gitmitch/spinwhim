@@ -3,8 +3,6 @@
 
 TODO:
 
-set map bounds based on location and radius, and update whenever those change
-
 add sliders for radius and range
 
 discard place pages if the map center has moved in the meantime
@@ -23,6 +21,8 @@ var doughnut = null;
 var markers = [];
 
 var homeLocation = coordPortland;
+
+//var bounds = null;
 
 
 function tweakLocation(map) {
@@ -43,6 +43,7 @@ function tweakLocation(map) {
 
 function centerMap(map, withMarker, errMsg) {
     map.setCenter(homeLocation);
+    //bounds = new google.maps.LatLngBounds();
 
     var marker = new google.maps.Marker({
         position: homeLocation,
@@ -111,7 +112,7 @@ function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
         }
     })
 
-    drawMask(map, searchFrom, fromRadius, toRadius);
+    drawMask(map, searchFrom, fromRadius, toRadius, true);
 }
 
 function addMarkerForPlace(map, place) {
@@ -143,7 +144,7 @@ function clearAllMarkers() {
     markers = [];
 }
 
-function drawMask(map, center, innerRadius, outerRadius) {
+function drawMask(map, center, innerRadius, outerRadius, changeBounds) {
     drawDoughnut(map, center, outerRadius, outerRadius * 10);
 
     innerCircle = new google.maps.Circle({
@@ -154,6 +155,13 @@ function drawMask(map, center, innerRadius, outerRadius) {
         center: center,
         radius: innerRadius
     });
+
+    if(changeBounds !== undefined && changeBounds) {
+        var bounds = new google.maps.LatLngBounds();
+        bounds.extend(google.maps.geometry.spherical.computeOffset(center, outerRadius, 0));
+        bounds.extend(google.maps.geometry.spherical.computeOffset(center, outerRadius, 180));
+        map.fitBounds(bounds);
+    }
 }
 
 
