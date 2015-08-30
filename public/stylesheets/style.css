@@ -16,10 +16,29 @@ html, body {
   height:100%;
 }
 
+
 #range {
-  width: 200px;
+
+  width: 300px;
+
 }
+
+  @media (max-width: 768px) and (min-width: 667px) {
+    #range {
+      width: 650px;
+    }
+  }
+
 
 #aboutbody {
   padding-bottom: 50px;
+}
+
+
+
+@media(max-width:992px){
+  .nav>li>a {
+    padding-left: 10px;
+    padding-right:10px
+  }
 }
