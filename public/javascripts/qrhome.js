@@ -3,9 +3,8 @@
 
 TODO:
 
-add sliders for radius and range
 
-discard place pages if the map center has moved in the meantime
+implement random button
 
  */
 
@@ -24,6 +23,8 @@ var curLowerBound = DEFAULT_LOWER;
 var curUpperBound = DEFAULT_UPPER;
 
 var homeMarker = null;
+
+var queryNdx = 0;
 
 
 function tweakLocation(map) {
@@ -144,6 +145,8 @@ function updateRadius(lowerBound, upperBound, searchAgain) {
 function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
     var service = new google.maps.places.PlacesService(map);
 
+    queryNdx++;
+    var thisQueryNdx = queryNdx;
     var pageNum = 1;
 
     service.nearbySearch({
@@ -152,6 +155,8 @@ function showDestinations(map, searchFrom, types, fromRadius, toRadius) {
         types: types
     }, function(results, status, pagination) {
 
+        // discard this page if a new query has been started since this query was requested
+        if(queryNdx != thisQueryNdx) return;
 
         if(status === google.maps.places.PlacesServiceStatus.OK) {
             for(var i=0; i < results.length; i++) {
